@@ -8,6 +8,7 @@ resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/release
 
 libraryDependencies ++= Seq(
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.1",
+  "io.argonaut" %% "argonaut" % "6.0.4",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "org.scalatest" % "scalatest_2.11" % "2.2.0" % "test"
 )
