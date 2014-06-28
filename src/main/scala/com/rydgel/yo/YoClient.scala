@@ -57,7 +57,7 @@ object YoClient {
    * Send a YO to all of your subscribers.
    *
    * @param apiToken a YO token
-   * @return a future of an optional String
+   * @return a future of a YoResponse
    */
   def yoAll(implicit apiToken: ApiToken): Future[YoResponse] = {
     val request = url("http://api.justyo.co/yoall/") << Map("api_token" -> apiToken.token)
