@@ -1,7 +1,6 @@
 package com.rydgel.yo
 
 import dispatch._, Defaults._
-import scalaz._, Scalaz._
 import argonaut._, Argonaut._
 
 /**
