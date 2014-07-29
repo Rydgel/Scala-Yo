@@ -20,4 +20,9 @@ result.onComplete {
   case Failure(t) => println(t.getMessage)
 }
 
+// Send a Yo to only one person
+YoClient.yo("username")
+// or with explicit key:
+YoClient.yo("username")(ApiToken("YOUR-API-KEY"))
+
 ```

@@ -13,13 +13,12 @@ class YoClientSuite extends FunSuite {
   test("YoAll request with a good API key should be ok") {
     val request = YoClient.yoAll(key)
     val result = Await.result(request, 5 seconds)
-    assert(result.isInstanceOf[YoResponse])
+    assert(result.isInstanceOf[String])
   }
 
-  test("YoAll request with a bad API key should be an error") {
-    val request = YoClient.yoAll(ApiToken("bad-key"))
-    intercept[YoClientException] {
-      Await.result(request, 5 seconds)
-    }
+  test("Yo request with a good API to a user should be ok") {
+    val request = YoClient.yo("fitzlord")(key)
+    val result = Await.result(request, 5 seconds)
+    assert(result.isInstanceOf[String])
   }
 }

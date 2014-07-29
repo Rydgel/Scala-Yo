@@ -1,7 +1,6 @@
 package com.rydgel.yo
 
 import dispatch._, Defaults._
-import argonaut._, Argonaut._
 
 /**
  * An access token.
@@ -13,58 +12,36 @@ import argonaut._, Argonaut._
 case class ApiToken(token: String)
 
 /**
- * A good Yo response.
- *
- * @author Jérôme Mahuet <jerome.mahuet@gmail.com>
- * @constructor create a new YoResponse to use with json unserializing.
- * @param result The text received when the call was successful
- */
-case class YoResponse(result: String)
-
-object YoResponse {
-  implicit def YoResponseDecodeJson: DecodeJson[YoResponse] =
-    jdecode1L(YoResponse.apply)("result")
-}
-
-/**
- * A bad Yo response.
- *
- * @author Jérôme Mahuet <jerome.mahuet@gmail.com>
- * @constructor create a new YoError to use with json unserializing.
- * @param code error code
- * @param error error text
- */
-case class YoError(code: Int, error: String)
-
-object YoError {
-  implicit def YoErrorDecodeJson: DecodeJson[YoError] =
-    jdecode2L(YoError.apply)("code", "error")
-}
-
-case class YoClientException(error: YoError) extends Throwable {
-  override def getMessage = error.error
-  def getError = error.error
-}
-
-/**
  * Yo API client.
  * https://medium.com/@YoAppStatus/yo-developers-api-e7f2f0ec5c3c
  *
  * @author Jérôme Mahuet <jerome.mahuet@gmail.com>
  */
 object YoClient {
+
+  private def makeRequest(endpoint: String, args: Traversable[(String,String)]): Future[String] =
+    Http(url(endpoint) << args OK as.String)
+
   /**
    * Send a YO to all of your subscribers.
    *
    * @param apiToken a YO token
-   * @return a future of a YoResponse
+   * @return a future of the response as String
    */
-  def yoAll(implicit apiToken: ApiToken): Future[YoResponse] = {
-    val request = url("http://api.justyo.co/yoall/") << Map("api_token" -> apiToken.token)
-    Http(request) map { response =>
-      response.getResponseBody.decodeOption[YoResponse].getOrElse(
-        throw new YoClientException(response.getResponseBody.decodeOption[YoError].get)
-      )
-    }
+  def yoAll(implicit apiToken: ApiToken): Future[String] = {
+    val args = "api_token" -> apiToken.token :: Nil
+    makeRequest("http://api.justyo.co/yoall/", args)
+  }
+
+  /**
+   * Send a Yo to one username.
+   *
+   * @param apiToken a Yo token
+   * @param username String
+   * @return a future of the response as String
+   */
+  def yo(username: String)(implicit apiToken: ApiToken): Future[String] = {
+    val args = "api_token" -> apiToken.token :: "username" -> username :: Nil
+    makeRequest("http://api.justyo.co/yoall/", args)
   }
 }
